@@ -9,6 +9,14 @@ public class Order
     public int CashierId { get; set; }
     public DateTime? PaidOnDate { get; set; }
     
-    private List<OrderProduct> ProductsOrdered { get; set; } = new List<OrderProduct>();
-    public decimal Total => ProductsOrdered.Sum(op => op.OrderTotal);
+    public List<OrderProduct> ProductsOrdered { get; set; }
+
+    public decimal Total
+    {
+        get
+        {
+            decimal OrderCost = ProductsOrdered.Sum(po => po.Quantity * po.Product.Price);
+            return OrderCost;
+        }
+    }
 }

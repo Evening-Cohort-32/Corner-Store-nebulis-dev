@@ -34,6 +34,26 @@ app.UseHttpsRedirection();
 
 //endpoints go here
 
+//Cashier Endpoints
+
+//Get a cashier by Id
+app.MapGet("/api/cashier/{id}", (CornerStoreDbContext db, int id) =>
+{
+    return db.Cashiers
+    .Select(c => new Cashier
+    {
+        Id = c.Id,
+        FirstName = c.FirstName,
+        LastName = c.LastName,
+        Orders = c.Orders.Select(o => new Order
+        {
+            Id = o.Id,
+            PaidOnDate = o.PaidOnDate
+        }).ToList()
+    });
+});
+
+
 app.Run();
 
 //don't move or change this!
