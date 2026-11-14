@@ -36,6 +36,14 @@ app.UseHttpsRedirection();
 
 //Cashier Endpoints
 
+//Add Cashier
+app.MapPost("/api/cashier", (CornerStoreDbContext db, Cashier cashier) =>
+{
+    db.Cashiers.Add(cashier);
+    db.SaveChanges();
+    return Results.Created($"/api/cashier/{cashier.Id}", cashier);
+});
+
 //Get a cashier by Id
 app.MapGet("/api/cashier/{id}", (CornerStoreDbContext db, int id) =>
 {
