@@ -6,7 +6,7 @@ public class Product
 {
     public int Id { get; set; }
     [Required]
-    public string ProductName { get; set; }
+    public string Name { get; set; }
     [Required]
     public decimal Price { get; set; }
     [Required]

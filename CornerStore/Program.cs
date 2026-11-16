@@ -61,6 +61,76 @@ app.MapGet("/api/cashier/{id}", (CornerStoreDbContext db, int id) =>
     });
 });
 
+//Product Endpoints
+
+//Add Product
+app.MapPost("/api/products", (CornerStoreDbContext db, Product product) =>
+{
+    db.Products.Add(product);
+    db.SaveChanges();
+    return Results.Created($"/api/product/{product.Id}", product);
+});
+
+//Update Product
+app.MapPut("/api/products/{id}", (CornerStoreDbContext db, int id, Product product) =>
+{
+    Product ProductToUpdate = db.Products.SingleOrDefault(p => p.Id == id);
+    if (ProductToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    ProductToUpdate.Name = product.Name;
+    ProductToUpdate.Price = product.Price;
+    ProductToUpdate.Brand = product.Brand;
+    ProductToUpdate.CategoryId = product.CategoryId;
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+//Get all products
+app.MapGet("/api/products", (CornerStoreDbContext db) =>
+{
+    return db.Products
+    .Select(p => new Product
+    {
+        Id = p.Id,
+        Name = p.Name,
+        Price = p.Price,
+        Brand = p.Brand,
+        CategoryId = p.CategoryId,
+        Category = new Category
+        {
+            Id = p.Category.Id,
+            Name = p.Category.Name
+        }
+    })
+    .ToList();
+});
+
+//get all products by search
+app.MapGet("/api/products/search", (CornerStoreDbContext db, string search) =>
+{
+    if (string.IsNullOrWhiteSpace(search))
+    {
+        return Results.BadRequest("Please enter a search");
+    }
+
+    return Results.Ok(db.Products
+    .Where(p => p.Name.ToLower().Contains(search.ToLower()) || p.Category.Name.ToLower().Contains(search.ToLower()))
+    .Select(p => new Product
+    {
+       Id = p.Id,
+       Name = p.Name,
+       Price = p.Price,
+       Brand = p.Brand,
+       CategoryId = p.CategoryId,
+       Category = new Category
+       {
+           Id = p.Category.Id,
+           Name = p.Category.Name
+       } 
+    }).ToList());
+});
 
 app.Run();
 
