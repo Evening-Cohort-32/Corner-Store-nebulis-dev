@@ -7,16 +7,10 @@ public class Order
     public int Id { get; set; }
     [Required]
     public int CashierId { get; set; }
+    public Cashier Cashier { get; set; }
+    public DateTime OrderDate { get; set; }
     public DateTime? PaidOnDate { get; set; }
     
-    public List<OrderProduct> ProductsOrdered { get; set; }
-
-    public decimal Total
-    {
-        get
-        {
-            decimal OrderCost = ProductsOrdered.Sum(po => po.Quantity * po.Product.Price);
-            return OrderCost;
-        }
-    }
+    public List<OrderProduct> OrderProducts { get; set; } = new();
+    public decimal Total => OrderProducts.Sum(op => op.OrderTotal);
 }
